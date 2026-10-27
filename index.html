@@ -74,6 +74,13 @@
     .hero-copy{background:rgba(5,5,5,.9);border:1px solid rgba(255,255,255,.13);border-radius:26px;padding:clamp(24px,3vw,38px)}
     .hero-copy h1{font-size:clamp(48px,5.4vw,82px);overflow-wrap:anywhere}
     @media(max-width:650px){.hero-copy h1{font-size:clamp(42px,11vw,68px)}}
+    /* Communities strip */
+    .marquee-wrap{width:min(calc(100% - 42px),var(--max));margin:0 auto;padding:26px 0 28px;border:1px solid rgba(255,255,255,.12);border-radius:22px;background:rgba(5,5,5,.9)}
+    .marquee-label{width:auto;margin:0 28px 20px;color:#aaa;text-align:center;font-size:10px;letter-spacing:.19em}
+    .marquee{mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+    .marquee-track{gap:22px;color:#ddd;font-size:14px}
+    .marquee-track span{white-space:nowrap}.marquee-track i{color:#757575}
+    @media(max-width:650px){.marquee-wrap{width:calc(100% - 32px);padding:23px 0}.marquee-label{margin-bottom:17px}.marquee-track{font-size:13px;gap:18px}}
   </style>
 </head>
 <body>
