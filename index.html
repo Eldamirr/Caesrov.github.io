@@ -42,9 +42,16 @@
     .discord-pill{padding:9px 12px;border:1px solid rgba(216,199,255,.15);border-radius:99px;text-transform:none;letter-spacing:0;white-space:nowrap}
     @media(max-width:1000px){.current-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
     @media(max-width:650px){.current-grid{grid-template-columns:1fr}.current-grid .role-card{min-height:300px;padding:25px}}
+    /* Full-page snow backdrop and translucent dark panels */
+    body{isolation:isolate;background:#07080d}
+    .site-snow.snow-street{position:fixed;inset:0;width:100%;height:100%;min-height:0;z-index:-1;pointer-events:none}
+    main{position:relative;z-index:1}
+    .topbar,.topbar.scrolled,.discord-profile,.big-project,.bot-showcase-inner,.role-card,.capability-card,.server-layout-card,.role-group-card,.icon-panel,.icon-tile,.form-shell{background:rgba(5,5,8,.72);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-color:rgba(255,255,255,.10)}
+    a.role-card:hover,.capability-card:hover,.server-layout-card:hover,.role-group-card:hover,.icon-tile:hover,.discord-profile:hover{background:rgba(12,11,16,.78)}
   </style>
 </head>
 <body>
+  <div class="snow-street site-snow" aria-hidden="true"></div>
   <div id="loader" class="loader" aria-hidden="true">
     <div class="loader-orb"></div>
     <div class="loader-inner">
@@ -73,7 +80,7 @@
   </header>
 
   <main id="top">
-    <section class="hero shell snow-street">
+    <section class="hero shell">
       <a class="discord-profile hero-presence reveal" href="https://discord.com/users/1019613116209823874" target="_blank" rel="noreferrer">
         <div class="avatar-wrap">
           <div id="avatarFallback" class="avatar-fallback">🌹</div>
