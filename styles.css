@@ -294,3 +294,28 @@ fieldset{border:0;padding:0;margin:0}.choice-grid{display:grid;grid-template-col
   .capability-card h3{font-size:19px}
   .capability-card>p{font-size:14px}
 }
+
+
+/* ===== SNOWY STREET: copy this CSS into your site ===== */
+  .snow-street {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    min-height: 420px;
+    overflow: hidden;
+    background: #07080d;
+    isolation: isolate;
+  }
+  .snow-street > canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    z-index: -1;
+    pointer-events: none;
+  }
+  /* ===== end snowy street CSS ===== */
+/* Preserve the existing responsive hero layout while the canvas renders behind it. */
+.hero.snow-street { height: auto; min-height: 100svh; background: transparent; }
+@media (max-width: 650px) { .hero.snow-street { min-height: auto; } }
