@@ -33,6 +33,15 @@
     .bot-feature-icon{width:52px;height:52px;display:grid;place-items:center;border:1px solid rgba(216,199,255,.2);border-radius:16px;background:rgba(216,199,255,.065)}
     .bot-feature-icon svg{width:23px;height:23px;fill:none;stroke:#cdbaff;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
     @media(max-width:760px){.bot-features{grid-template-columns:repeat(4,minmax(0,1fr));row-gap:22px}.bot-showcase-art img{height:270px}}
+    .current-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+    .current-grid .role-card{min-height:355px;padding:30px;border-radius:25px}
+    .current-grid .card-top{font-size:10px;letter-spacing:.14em}
+    .current-grid .role-card h3{font-size:26px;margin:30px 0 15px}
+    .current-grid .role-card p{font-size:15px;line-height:1.7}
+    .current-grid .card-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;border-top:1px solid rgba(255,255,255,.1);padding-top:20px;color:#b4a9c0;font-size:10px}
+    .discord-pill{padding:9px 12px;border:1px solid rgba(216,199,255,.15);border-radius:99px;text-transform:none;letter-spacing:0;white-space:nowrap}
+    @media(max-width:1000px){.current-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:650px){.current-grid{grid-template-columns:1fr}.current-grid .role-card{min-height:300px;padding:25px}}
   </style>
 </head>
 <body>
@@ -142,8 +151,8 @@
         <p class="marquee-label">COMMUNITIES I’VE HELPED WITH</p>
         <div class="marquee">
           <div class="marquee-track">
-            <span>Kaizen</span><i>•</i><span>HUNTERS</span><i>•</i><span>Arcadius Forge</span><i>•</i><span>Show Your Control</span><i>•</i><span>Zephyr</span><i>•</i><span>BlobQuest</span><i>•</i><span>OpenDev</span><i>•</i><span>Case Paradise</span><i>•</i><span>Superial Studio</span><i>•</i>
-            <span>Kaizen</span><i>•</i><span>HUNTERS</span><i>•</i><span>Arcadius Forge</span><i>•</i><span>Show Your Control</span><i>•</i><span>Zephyr</span><i>•</i><span>BlobQuest</span><i>•</i><span>OpenDev</span><i>•</i><span>Case Paradise</span><i>•</i><span>Superial Studio</span><i>•</i>
+            <span>Kaizen</span><i>•</i><span>HUNTERS</span><i>•</i><span>Arcadius Forge</span><i>•</i><span>Show Your Control</span><i>•</i><span>Zephyr</span><i>•</i><span>Northstar Studio</span><i>•</i><span>Case Paradise</span><i>•</i><span>Superial Studio</span><i>•</i>
+            <span>Kaizen</span><i>•</i><span>HUNTERS</span><i>•</i><span>Arcadius Forge</span><i>•</i><span>Show Your Control</span><i>•</i><span>Zephyr</span><i>•</i><span>Northstar Studio</span><i>•</i><span>Case Paradise</span><i>•</i><span>Superial Studio</span><i>•</i>
           </div>
         </div>
       </div>
@@ -169,57 +178,50 @@
       </div>
 
       <div id="currentGrid" class="current-grid">
-        <a class="role-card reveal" href="https://discord.gg/d6sK3HXKN" target="_blank" rel="noreferrer">
-          <div class="card-top"><span>COMMUNITY MANAGER · LEADERSHIP</span><b>↗</b></div>
+        <a class="role-card reveal" href="https://discord.gg/d6sK3HXKN" target="_blank" rel="noopener noreferrer">
+          <div class="card-top"><span>COMMUNITY MANAGER</span><b aria-hidden="true">↗</b></div>
           <h3>Kaizen</h3>
-          <p>I work with senior leadership to oversee staff, support the Moderation, Support, Event, Trello and Testing departments, and handle escalated tickets, appeals and community concerns.</p>
-          <div class="card-foot"><span>160K+ members</span><span>300+ tickets</span></div>
+          <p>I manage the community’s server, staff teams and departments, organizing channels, roles, bots and internal systems to keep everything running smoothly.</p>
+          <div class="card-foot"><span class="card-context">160K+ members</span><span class="discord-pill">Discord ↗</span></div>
         </a>
 
-        <a class="role-card reveal delay-1" href="https://discord.gg/hntrs" target="_blank" rel="noreferrer">
-          <div class="card-top"><span>COMMUNITY MANAGER</span><b>↗</b></div>
+        <a class="role-card reveal" href="https://discord.gg/hntrs" target="_blank" rel="noopener noreferrer">
+          <div class="card-top"><span>COMMUNITY MANAGER</span><b aria-hidden="true">↗</b></div>
           <h3>HUNTERS</h3>
-          <p>I oversee the server, staff organization and community operations alongside the Operations Lead, while also providing custom server icons and helping shape the server’s presentation and structure.</p>
-          <div class="card-foot"><span>Roblox game</span><span>in development</span></div>
+          <p>I manage the community’s server, staff teams and departments, organizing channels, roles, bots and internal systems to keep everything running smoothly.</p>
+          <div class="card-foot"><span class="card-context">Roblox community</span><span class="discord-pill">Discord ↗</span></div>
         </a>
 
-        <a class="role-card reveal" href="https://discord.gg/pxKNdFr37" target="_blank" rel="noreferrer">
-          <div class="card-top"><span>OPERATIONS LEAD</span><b>↗</b></div>
+        <a class="role-card reveal" href="https://discord.gg/pxKNdFr37" target="_blank" rel="noopener noreferrer">
+          <div class="card-top"><span>COMMUNITY MANAGER</span><b aria-hidden="true">↗</b></div>
           <h3>Arcadius Forge</h3>
-          <p>I help oversee community operations and internal structure, including staff teams, departments, roles, permissions, bots, channels and internal systems.</p>
-          <div class="card-foot"><span>Roblox studio</span></div>
+          <p>I manage the community’s server, staff teams and departments, organizing channels, roles, bots and internal systems to keep everything running smoothly.</p>
+          <div class="card-foot"><span class="card-context">Gaming studio</span><span class="discord-pill">Discord ↗</span></div>
         </a>
 
-        <a class="role-card reveal delay-1" href="https://discord.gg/9U44vkP3q" target="_blank" rel="noreferrer">
-          <div class="card-top"><span>OPERATIONS LEAD</span><b>↗</b></div>
+        <a class="role-card reveal" href="https://discord.gg/9U44vkP3q" target="_blank" rel="noopener noreferrer">
+          <div class="card-top"><span>COMMUNITY MANAGER</span><b aria-hidden="true">↗</b></div>
           <h3>Show Your Control</h3>
-          <p>I oversee the server’s structure, staff systems and departments while supporting moderation, support, testing, content and event teams as the community prepares for launch.</p>
-          <div class="card-foot"><span>Roblox battlegrounds</span></div>
+          <p>I manage the community’s server, staff teams and departments, organizing channels, roles, bots and internal systems to keep everything running smoothly.</p>
+          <div class="card-foot"><span class="card-context">Roblox community</span><span class="discord-pill">Discord ↗</span></div>
         </a>
 
-        <a class="role-card extra-current reveal" href="https://discord.gg/Q9bpv6UJP" target="_blank" rel="noreferrer">
-          <div class="card-top"><span>COMMUNITY MANAGER</span><b>↗</b></div>
+        <a class="role-card extra-current reveal" href="https://discord.gg/Q9bpv6UJP" target="_blank" rel="noopener noreferrer">
+          <div class="card-top"><span>COMMUNITY MANAGER</span><b aria-hidden="true">↗</b></div>
           <h3>Zephyr</h3>
-          <p>I help oversee the community’s structure, staff organization, bots and general server operations while supporting the team and keeping the server organized.</p>
-          <div class="card-foot"><span>Community management</span><span>Discord ↗</span></div>
+          <p>I manage the community’s server, staff teams and departments, organizing channels, roles, bots and internal systems to keep everything running smoothly.</p>
+          <div class="card-foot"><span class="card-context">Community</span><span class="discord-pill">Discord ↗</span></div>
         </a>
 
-        <article class="role-card extra-current reveal delay-1">
-          <div class="card-top"><span>SCOUT LEAD · SCOUT MANAGER</span></div>
-          <h3>OpenDev</h3>
-          <p>I lead the Game Scout team, manage the scouts and keep the scouting operation organized while also finding promising Roblox projects for acquisition, investment or partnership opportunities.</p>
-          <div class="card-foot"><span>Scout team leadership</span><span>game acquisitions</span></div>
-        </article>
-
-        <a class="role-card extra-current reveal" href="https://discord.gg/R6zWyb2Ct" target="_blank" rel="noreferrer">
-          <div class="card-top"><span>OPERATIONS LEAD</span><b>↗</b></div>
-          <h3>BlobQuest</h3>
-          <p>I lead the server’s overall operations and structure, including staff management, bots, roles, permissions, internal systems, departments and day-to-day organization.</p>
-          <div class="card-foot"><span>Roblox game</span><span>operations</span></div>
+        <a class="role-card extra-current reveal" href="https://discord.gg/qspVpDPSy" target="_blank" rel="noopener noreferrer">
+          <div class="card-top"><span>COMMUNITY MANAGER</span><b aria-hidden="true">↗</b></div>
+          <h3>Northstar Studio</h3>
+          <p>I manage the community’s server, staff teams and departments, organizing channels, roles, bots and internal systems to keep everything running smoothly.</p>
+          <div class="card-foot"><span class="card-context">Gaming studio</span><span class="discord-pill">Discord ↗</span></div>
         </a>
       </div>
 
-      <button id="viewAllBtn" class="view-all" type="button" aria-expanded="false">View all 7 <span>↓</span></button>
+      <button id="viewAllBtn" class="view-all" type="button" aria-expanded="false">View all 6 <span>↓</span></button>
 
       <div class="group-head previous-head reveal">
         <div><span class="group-kicker muted">PREVIOUS</span><h3>Retired experience</h3></div>
@@ -227,6 +229,7 @@
       </div>
 
       <div class="retired-list">
+        <article class="retired-row reveal"><div><h4>OpenDev</h4><span>Scout Lead · Scout Manager</span><p>I led the Game Scout team and identified Roblox projects for acquisition, investment or partnership opportunities.</p></div><b>RETIRED</b></article>
         <article class="retired-row reveal"><div><h4>Superial Studio</h4><span>Operations Lead</span><p>I previously oversaw staff, departments, bots, roles, permissions, server structure and internal systems. I retired because ownership’s approach did not align with my work ethic.</p></div><b>RETIRED</b></article>
         <article class="retired-row reveal"><div><h4>Case Paradise</h4><span>HR · Event Department Manager · Moderator · Support</span><p>I worked in HR, led the event team and also served in moderation and support for a 30K+ member community.</p></div><b>RETIRED</b></article>
         <article class="retired-row reveal"><div><h4>Lunar Labs</h4><span>Leadership Team</span><p>I handled staff matters, bot operations and server systems with a focus on internal organization and staff affairs.</p></div><b>RETIRED</b></article>
