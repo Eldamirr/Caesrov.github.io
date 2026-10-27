@@ -518,7 +518,7 @@
     let W = 1, H = 1, vx = 0, vy = 0, f = 1;
     let lamps = [], flakes = [];
     let wind = 0.3, pointerWind = null, t = 0, last = 0;
-    let running = false, onScreen = true;
+    let running = false, onScreen = true, frameId = null;
 
     const P = (X, Y, Z) => [vx + (X - CAM_X) * f / Z, vy + (CAM_H - Y) * f / Z];
     const fog = (rgb, Z, a = 1) => {
@@ -996,12 +996,12 @@
       ctx.globalAlpha = 1;
     }
 
-    function loop(now) { if (!running) return; frame(now, true); requestAnimationFrame(loop); }
+    function loop(now) { if (!running) return; frame(now, true); frameId = requestAnimationFrame(loop); }
     function start() {
       if (running || reduceMotion || !onScreen || document.hidden) return;
-      running = true; last = performance.now(); requestAnimationFrame(loop);
+      running = true; last = performance.now(); frameId = requestAnimationFrame(loop);
     }
-    function stop() { running = false; }
+    function stop() { running = false; if (frameId !== null) cancelAnimationFrame(frameId); frameId = null; }
 
     el.addEventListener('pointermove', e => {
       const r = el.getBoundingClientRect();
