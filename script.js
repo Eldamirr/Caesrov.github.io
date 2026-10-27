@@ -104,7 +104,7 @@ viewAllBtn.addEventListener('click',function(){
   const open = viewAllBtn.getAttribute('aria-expanded') === 'true';
   viewAllBtn.setAttribute('aria-expanded',String(!open));
   currentGrid.classList.toggle('expanded',!open);
-  viewAllBtn.childNodes[0].nodeValue = open ? 'View all 7 ' : 'Show less ';
+  viewAllBtn.childNodes[0].nodeValue = open ? 'View all 6 ' : 'Show less ';
 
   if(!open){
     requestAnimationFrame(function(){
