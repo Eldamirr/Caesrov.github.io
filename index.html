@@ -9,6 +9,14 @@
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://api.lanyard.rest">
   <link rel="stylesheet" href="styles.css?v=roles-20261023">
+  <style>
+    .bot-feature{padding-top:28px;padding-bottom:65px}
+    .bot-feature-inner{position:relative;overflow:hidden;display:grid;grid-template-columns:1.15fr .85fr;align-items:center;gap:32px;padding:clamp(30px,5vw,70px);border:1px solid rgba(216,199,255,.2);border-radius:32px;background:radial-gradient(circle at 83% 40%,rgba(151,113,222,.19),transparent 38%),linear-gradient(125deg,rgba(33,27,44,.96),rgba(14,12,22,.98));box-shadow:0 30px 80px rgba(0,0,0,.18)}
+    .bot-feature-copy{position:relative;z-index:1}.bot-feature-copy h2{font-size:clamp(48px,6vw,82px);line-height:.95;letter-spacing:-.065em;margin:18px 0 24px}.bot-feature-copy h2 span{color:var(--accent)}.bot-feature-copy>p:not(.eyebrow){max-width:590px;color:var(--muted);line-height:1.75;font-size:17px}
+    .bot-feature-tags{display:flex;flex-wrap:wrap;gap:9px;margin:25px 0 32px}.bot-feature-tags span{border:1px solid rgba(216,199,255,.17);border-radius:99px;padding:8px 13px;color:#c9bfd6;font-size:11px}.bot-feature-link{display:inline-flex}
+    .bot-feature-art{position:relative;min-height:285px;display:flex;align-items:center;justify-content:center;flex-direction:column}.bot-art-orbit{position:absolute;width:230px;height:230px;border:1px solid rgba(216,199,255,.16);border-radius:50%}.bot-art-orbit-a{transform:rotate(-25deg) scaleX(1.25)}.bot-art-orbit-b{transform:rotate(35deg) scaleX(1.25)}.bot-art-mark{position:relative;display:grid;place-items:center;width:155px;height:155px;border-radius:42px;border:1px solid rgba(225,212,255,.32);background:linear-gradient(145deg,rgba(213,194,255,.22),rgba(56,43,77,.52));box-shadow:0 20px 60px rgba(128,95,186,.22);color:#f7f1ff;font-size:90px;font-weight:850;letter-spacing:-.08em}.bot-art-mark span{position:absolute;right:23px;top:20px;font-size:22px;color:#d3baff}.bot-art-label{position:absolute;bottom:2px;color:#bcb0cc;font-size:9px;font-weight:800;letter-spacing:.2em}.bot-art-label span{color:#cdbaff}
+    @media(max-width:760px){.bot-feature-inner{grid-template-columns:1fr;gap:8px}.bot-feature-art{min-height:235px}.bot-art-orbit{width:175px;height:175px}.bot-art-mark{width:120px;height:120px;font-size:72px;border-radius:34px}.bot-art-mark span{right:17px;top:15px}.bot-feature-copy>p:not(.eyebrow){font-size:15px}}
+  </style>
 </head>
 <body>
   <div id="loader" class="loader" aria-hidden="true">
@@ -66,7 +74,7 @@
       <a class="big-project reveal delay-1" href="https://discord.gg/d6sK3HXKN" target="_blank" rel="noreferrer">
         <div class="project-orbit orbit-a"></div>
         <div class="project-orbit orbit-b"></div>
-        <div class="project-head"><span>BIGGEST PROJECT</span><span class="active-pill"><i></i> ACTIVE</span></div>
+        <div class="project-head"><span>LARGEST SERVER I MANAGE</span><span class="active-pill"><i></i> ACTIVE</span></div>
         <div class="project-main">
           <span class="role-label">COMMUNITY MANAGER · LEADERSHIP</span>
           <h2>Kaizen<span>.</span></h2>
@@ -80,6 +88,23 @@
       </a>
 
       <div class="scroll-hint"><i></i><span>SCROLL TO EXPLORE</span></div>
+    </section>
+
+    <section id="caesrov-bot" class="section shell bot-feature" aria-labelledby="bot-title">
+      <div class="bot-feature-inner">
+        <div class="bot-feature-copy">
+          <p class="eyebrow">MY BIGGEST PROJECT</p>
+          <h2 id="bot-title">Meet Caesrov<span>.</span></h2>
+          <p>My own Discord bot, built to bring community tools together in one place. Caesrov is the bot I plan to use as the main system for the servers I work with.</p>
+          <div class="bot-feature-tags"><span>Community tools</span><span>Server management</span><span>Message builder</span></div>
+          <a class="primary-btn bot-feature-link" href="https://bot.caesrov.com/" target="_blank" rel="noopener noreferrer">Explore Caesrov <span>↗</span></a>
+        </div>
+        <div class="bot-feature-art" aria-hidden="true">
+          <div class="bot-art-orbit bot-art-orbit-a"></div><div class="bot-art-orbit bot-art-orbit-b"></div>
+          <div class="bot-art-mark">C<span>✦</span></div>
+          <div class="bot-art-label">YOUR COMMUNITY <span>✦</span> YOUR CONTROL</div>
+        </div>
+      </div>
     </section>
 
     <section id="about" class="section shell split-section">
