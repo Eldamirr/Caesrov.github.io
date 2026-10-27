@@ -8,7 +8,7 @@
   <title>Caesrov — Community Management</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://api.lanyard.rest">
-  <link rel="stylesheet" href="styles.css?v=roles-20261023">
+  <link rel="stylesheet" href="styles.css?v=snow-20261027">
   <style>
     .featured-stack{display:grid;gap:16px;align-self:stretch}
     .featured-bot{position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:flex-start;min-height:330px;padding:30px;border:1px solid rgba(216,199,255,.24);border-radius:30px;background:radial-gradient(circle at 92% 0%,rgba(164,132,218,.19),transparent 45%),linear-gradient(145deg,rgba(38,32,52,.96),rgba(16,13,23,.98));box-shadow:0 25px 70px rgba(0,0,0,.22);transition:transform .25s,border-color .25s}
@@ -73,7 +73,7 @@
   </header>
 
   <main id="top">
-    <section class="hero shell">
+    <section class="hero shell snow-street">
       <a class="discord-profile hero-presence reveal" href="https://discord.com/users/1019613116209823874" target="_blank" rel="noreferrer">
         <div class="avatar-wrap">
           <div id="avatarFallback" class="avatar-fallback">🌹</div>
@@ -458,5 +458,547 @@
   </footer>
 
   <script src="script.js"></script>
+<!-- ===== SNOWY STREET: copy this script into your site (before </body>) ===== -->
+<script>
+(() => {
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function seeded(seed) {
+    return () => {
+      seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+      let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+  function sprite(rgb) {
+    const s = document.createElement('canvas'); s.width = s.height = 32;
+    const c = s.getContext('2d');
+    const gr = c.createRadialGradient(16, 16, 0, 16, 16, 16);
+    gr.addColorStop(0, `rgba(${rgb},1)`); gr.addColorStop(0.35, `rgba(${rgb},.8)`); gr.addColorStop(1, `rgba(${rgb},0)`);
+    c.fillStyle = gr; c.fillRect(0, 0, 32, 32);
+    return s;
+  }
+  const COOL = sprite('226,232,248'), WARM = sprite('255,224,180');
+
+  // Scene layout in metres. The camera stands on the road looking down the street.
+  const CAM_X = -1.3, CAM_H = 1.7;
+  const CURB = 0, CURB_H = 0.15, FENCE_X = 5.2, WALL_X = 7.6, LEFT_X = -11.5, LAMP_X = 0.55;
+  const LAMP_Z = [17, 28.5, 40, 51.5, 63, 74.5, 86, 97.5];
+  const FOG = [9, 11, 17];
+
+  function SnowStreet(el) {
+    const canvas = document.createElement('canvas');
+    el.prepend(canvas);
+    const ctx = canvas.getContext('2d');
+    const bg = document.createElement('canvas');
+    const g = bg.getContext('2d');
+
+    let W = 1, H = 1, vx = 0, vy = 0, f = 1;
+    let lamps = [], flakes = [];
+    let wind = 0.3, pointerWind = null, t = 0, last = 0;
+    let running = false, onScreen = true;
+
+    const P = (X, Y, Z) => [vx + (X - CAM_X) * f / Z, vy + (CAM_H - Y) * f / Z];
+    const fog = (rgb, Z, a = 1) => {
+      const k = 1 - Math.exp(-Z / 55);
+      const c = rgb.map((v, i) => Math.round(v + (FOG[i] - v) * k));
+      return `rgba(${c[0]},${c[1]},${c[2]},${a})`;
+    };
+    function poly(pts, fill) {
+      g.fillStyle = fill; g.beginPath(); g.moveTo(pts[0][0], pts[0][1]);
+      for (let i = 1; i < pts.length; i++) g.lineTo(pts[i][0], pts[i][1]);
+      g.closePath(); g.fill();
+    }
+    // a rectangle lying on a wall plane (constant X), spanning z1..z2 and y1..y2
+    const wallQuad = (X, z1, z2, y1, y2, fill) => poly([P(X, y1, z1), P(X, y2, z1), P(X, y2, z2), P(X, y1, z2)], fill);
+    // a rectangle lying on the ground (constant Y), spanning x1..x2 and z1..z2
+    const groundQuad = (x1, x2, z1, z2, Y, fill) => poly([P(x1, Y, z1), P(x2, Y, z1), P(x2, Y, z2), P(x1, Y, z2)], fill);
+
+    function newFlake(anywhere) {
+      const z = 0.2 + Math.pow(Math.random(), 1.8) * 0.8;
+      return { x: Math.random() * (W + 200) - 100, y: anywhere ? Math.random() * H : -10 - Math.random() * 60,
+        z, r: 0.5 + z * 3.6, ph: Math.random() * Math.PI * 2, sp: 26 + z * 75 };
+    }
+
+    function layout() {
+      const rect = el.getBoundingClientRect();
+      W = Math.max(1, rect.width); H = Math.max(1, rect.height);
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      for (const c of [canvas, bg]) { c.width = Math.round(W * dpr); c.height = Math.round(H * dpr); }
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      g.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      const portrait = H > W;
+      vx = W * (portrait ? 0.2 : 0.27);
+      vy = H * 0.6;
+      f = Math.max(H * 0.9, W * 0.5);
+
+      drawStatic();
+
+      lamps = LAMP_Z.map(Z => {
+        const s = f / Z;
+        const [lx, ly] = P(LAMP_X, 3.55, Z);
+        const [bx, by] = P(LAMP_X, CURB_H, Z);
+        return { Z, s, lx, ly, bx, by, fade: Math.exp(-Z / 90) };
+      });
+
+      const target = Math.round(Math.min(4600, Math.max(1100, W * H / 230)));
+      while (flakes.length < target) flakes.push(newFlake(true));
+      flakes.length = target;
+    }
+
+    /* ---------- Viennese facades ---------- */
+    const PALETTE = [[40, 34, 28], [33, 31, 36], [42, 35, 27], [36, 31, 33], [31, 32, 36]];
+    const SNOWC = [76, 80, 98];
+    const wallPoly = (X, pts, fill) => poly(pts.map(([z, y]) => P(X, y, z)), fill);
+    function arch(X, z1, z2, y1, y2, fill) {
+      const r = (z2 - z1) / 2, zc = z1 + r, yb = y2 - r;
+      const pts = [[z1, y1], [z1, yb]];
+      for (let i = 1; i < 12; i++) { const a = Math.PI - i * Math.PI / 12; pts.push([zc + r * Math.cos(a), yb + r * Math.sin(a)]); }
+      pts.push([z2, yb], [z2, y1]);
+      wallPoly(X, pts, fill);
+    }
+    const warmFill = (z, k = 1) =>
+      `rgba(${Math.round(255 - z * 0.6)},${Math.round(176 - z * 0.5)},${Math.round(92 - z * 0.2)},${(0.4 + 0.35 * Math.exp(-z / 60)) * k})`;
+    function windowGlow(X, z, y, size) {
+      const c = P(X, y, z), rad = size * f / z;
+      const gl = g.createRadialGradient(c[0], c[1], 0, c[0], c[1], rad);
+      gl.addColorStop(0, `rgba(255,170,85,${0.12 * Math.exp(-z / 70)})`); gl.addColorStop(1, 'rgba(255,170,85,0)');
+      g.fillStyle = gl; g.fillRect(c[0] - rad, c[1] - rad, rad * 2, rad * 2);
+    }
+    function vline(X, z, y1, y2, color, w) {
+      const a = P(X, y1, z), b = P(X, y2, z);
+      g.strokeStyle = color; g.lineWidth = w; g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.stroke();
+    }
+    function hline(X, y, z1, z2, color, w) {
+      const a = P(X, y, z1), b = P(X, y, z2);
+      g.strokeStyle = color; g.lineWidth = w; g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); g.stroke();
+    }
+
+    function building(X, side, seg, rand) {
+      const { z1, z2, bays, bay, h, col } = seg;
+      const zm = (z1 + z2) / 2, ppm = f / zm;
+      const light = col.map(v => v + 20), dark = col.map(v => v * 0.6);
+      const mX = X + side * 0.9;
+      const litChance = z => rand() < (z < 35 ? 0.5 : 0.28);
+
+      // Mansard roof, set back behind the cornice, covered in snow
+      wallQuad(mX, z1, z2, h, h + 1.9, fog([22, 22, 28], zm));
+      wallQuad(mX, z1, z2, h + 1.2, h + 1.9, fog([52, 55, 68], zm));
+      wallQuad(mX, z1 - 0.1, z2 + 0.1, h + 1.9, h + 2.08, fog(SNOWC, zm));
+      if (rand() < 0.75) {
+        const cz = z1 + 1 + rand() * Math.max(0.5, z2 - z1 - 2.5);
+        wallQuad(mX + side * 0.3, cz, cz + 0.6, h + 1.7, h + 2.9, fog([30, 25, 24], zm));
+        wallQuad(mX + side * 0.3, cz - 0.06, cz + 0.66, h + 2.9, h + 3.05, fog(SNOWC, zm));
+      }
+
+      // Facade body
+      wallQuad(X, z1, z2, 0, h, fog(col, zm));
+      wallQuad(X, z1, z2, 0, 0.55, fog(dark, zm));                                   // plinth
+      if (ppm > 3) {                                                                 // rusticated ground floor
+        g.strokeStyle = fog(dark, zm, 0.8); g.lineWidth = 1; g.beginPath();
+        for (let y = 0.97; y < 3; y += 0.42) { const a = P(X, y, z1), b = P(X, y, z2); g.moveTo(a[0], a[1]); g.lineTo(b[0], b[1]); }
+        g.stroke();
+      }
+      wallQuad(X, z1, z2, 3.0, 3.3, fog(light, zm));                                // string course
+      wallQuad(X, z1, z2, 3.3, 3.42, fog(SNOWC, zm));
+
+      const zA = z1 + 0.5;
+      if (ppm > 2) for (let b = 0; b <= bays; b++) {                                // pilasters
+        const pz = zA + b * bay - 0.17;
+        wallQuad(X, pz, pz + 0.34, 3.42, h - 0.75, fog(light, zm, 0.85));
+        if (ppm > 6) wallQuad(X, pz - 0.05, pz + 0.39, h - 1.0, h - 0.75, fog(light, zm));   // capital
+      }
+
+      // Main cornice with dentils and a heavy line of snow
+      wallQuad(X, z1, z2, h - 0.75, h - 0.55, fog(light, zm));
+      wallQuad(X, z1, z2, h - 0.55, h - 0.22, fog(dark, zm));
+      if (ppm > 6) for (let dz = z1 + 0.1; dz < z2 - 0.1; dz += 0.3) wallQuad(X, dz, dz + 0.14, h - 0.55, h - 0.38, fog(light, zm));
+      wallQuad(X, z1 - 0.12, z2 + 0.12, h - 0.22, h, fog(light, zm));
+      wallQuad(X, z1 - 0.15, z2 + 0.15, h, h + 0.26, fog(SNOWC, zm));
+
+      const door = Math.floor(rand() * bays);
+      const fh = (h - 0.75 - 3.42) / 2;
+      for (let b = 0; b < bays; b++) {
+        const cz = zA + b * bay + bay / 2;
+
+        // Ground floor: arched shop windows and one arched doorway
+        const isDoor = b === door, gw = isDoor ? 1.3 : 1.5;
+        const gLit = litChance(cz);
+        if (gLit) windowGlow(X, cz, 1.6, 2.6);
+        arch(X, cz - gw / 2 - 0.14, cz + gw / 2 + 0.14, isDoor ? 0.55 : 0.68, 2.78, fog(dark, cz));
+        arch(X, cz - gw / 2, cz + gw / 2, isDoor ? 0.55 : 0.8, 2.64,
+          gLit ? warmFill(cz, isDoor ? 0.7 : 1) : fog([10, 10, 15], cz));
+        if (ppm > 5) {
+          if (isDoor) vline(X, cz, 0.55, 2.0, 'rgba(15,11,9,.8)', Math.max(0.6, 0.06 * f / cz));
+          else { vline(X, cz, 0.8, 2.64, 'rgba(15,11,9,.6)', Math.max(0.5, 0.05 * f / cz)); hline(X, 2.0, cz - gw / 2, cz + gw / 2, 'rgba(15,11,9,.6)', Math.max(0.5, 0.05 * f / cz)); }
+        }
+        if (!isDoor) wallQuad(X, cz - gw / 2 - 0.16, cz + gw / 2 + 0.16, 0.66, 0.8, fog(SNOWC, cz));
+        wallQuad(X, cz - 0.13, cz + 0.13, 2.5, 2.9, fog(light, cz));                 // keystone
+
+        // Upper floors
+        for (let k = 0; k < 2; k++) {
+          const wy = 3.42 + k * fh + 0.45, wh = fh - 1.05, ww = 1.15;
+          const lit = litChance(cz);
+          if (lit) windowGlow(X, cz, wy + wh / 2, 2.2);
+          if (k === 0) {                                                             // balustrade panel under 1st floor windows
+            wallQuad(X, cz - ww / 2, cz + ww / 2, wy - 0.78, wy - 0.3, fog(light, cz, 0.7));
+            if (ppm > 9) for (let bz = cz - ww / 2 + 0.12; bz < cz + ww / 2 - 0.05; bz += 0.18)
+              wallQuad(X, bz, bz + 0.07, wy - 0.72, wy - 0.36, fog(dark, cz));
+          }
+          wallQuad(X, cz - ww / 2 - 0.13, cz + ww / 2 + 0.13, wy - 0.13, wy + wh + 0.13, fog(light, cz));   // frame
+          wallQuad(X, cz - ww / 2, cz + ww / 2, wy, wy + wh, lit ? warmFill(cz) : fog([9, 10, 15], cz));
+          if (ppm > 4) {
+            const lw = Math.max(0.5, 0.05 * f / cz), mc = lit ? 'rgba(25,17,12,.6)' : 'rgba(40,40,50,.35)';
+            vline(X, cz, wy, wy + wh, mc, lw);
+            hline(X, wy + wh * 0.68, cz - ww / 2, cz + ww / 2, mc, lw);
+          }
+          wallQuad(X, cz - ww / 2 - 0.22, cz + ww / 2 + 0.22, wy - 0.26, wy - 0.13, fog(light, cz));      // sill
+          wallQuad(X, cz - ww / 2 - 0.22, cz + ww / 2 + 0.22, wy - 0.13, wy - 0.03, fog(SNOWC, cz));
+          if (k === 0) {                                                             // triangular pediment with snow
+            const top = wy + wh + 0.2;
+            wallPoly(X, [[cz - ww / 2 - 0.32, top], [cz, top + 0.48], [cz + ww / 2 + 0.32, top]], fog(light, cz));
+            wallPoly(X, [[cz - ww / 2 - 0.36, top + 0.02], [cz, top + 0.58], [cz + ww / 2 + 0.36, top + 0.02], [cz, top + 0.44]], fog(SNOWC, cz));
+          } else {                                                                   // straight hood
+            wallQuad(X, cz - ww / 2 - 0.26, cz + ww / 2 + 0.26, wy + wh + 0.16, wy + wh + 0.32, fog(light, cz));
+            wallQuad(X, cz - ww / 2 - 0.28, cz + ww / 2 + 0.28, wy + wh + 0.32, wy + wh + 0.44, fog(SNOWC, cz));
+          }
+        }
+
+        // Dormer in the mansard
+        if (rand() < 0.65) {
+          const dl = rand() < 0.3;
+          wallQuad(mX, cz - 0.45, cz + 0.45, h + 0.2, h + 1.25, fog([30, 28, 30], cz));
+          wallQuad(mX, cz - 0.28, cz + 0.28, h + 0.35, h + 1.1, dl ? warmFill(cz, 0.8) : fog([9, 10, 15], cz));
+          wallPoly(mX, [[cz - 0.55, h + 1.25], [cz, h + 1.65], [cz + 0.55, h + 1.25]], fog([30, 28, 30], cz));
+          wallPoly(mX, [[cz - 0.6, h + 1.27], [cz, h + 1.74], [cz + 0.6, h + 1.27], [cz, h + 1.58]], fog(SNOWC, cz));
+        }
+      }
+      // party wall seam
+      vline(X, z1, 0, h, fog([8, 8, 12], zm, 0.9), Math.max(1, 0.1 * f / z1));
+    }
+
+    function facades(X, zStart, zEnd, rand, side) {
+      const segs = [];
+      let z = zStart;
+      while (z < zEnd) {
+        const bays = 3 + Math.floor(rand() * 3), bay = 2.7 + rand() * 0.4;
+        const len = bays * bay + 1;
+        segs.push({ z1: z, z2: z + len, bays, bay, h: 8.4 + rand() * 1.2, col: PALETTE[Math.floor(rand() * PALETTE.length)] });
+        z += len;
+      }
+      for (let i = segs.length - 1; i >= 0; i--) building(X, side, segs[i], rand);
+    }
+
+    /* Baroque church dome at the end of the street */
+    function church(Xc, Z) {
+      const s = f / Z, col = 'rgb(25,24,31)', dome = 'rgb(28,44,43)', snow = 'rgb(66,69,84)';
+      const rect = (x1, x2, y1, y2, c) => poly([P(x1, y1, Z), P(x1, y2, Z), P(x2, y2, Z), P(x2, y1, Z)], c);
+      rect(Xc - 10, Xc + 10, 0, 13, col);                                          // body
+      for (const dx of [-7.5, 7.5]) {                                              // twin columns
+        rect(Xc + dx - 1, Xc + dx + 1, 0, 22, col);
+        rect(Xc + dx - 1.4, Xc + dx + 1.4, 22, 23, col);
+        rect(Xc + dx - 1.4, Xc + dx + 1.4, 23, 23.4, snow);
+      }
+      poly([P(Xc - 4.5, 13, Z), P(Xc, 16.5, Z), P(Xc + 4.5, 13, Z)], col);          // portico pediment
+      poly([P(Xc - 4.7, 13.1, Z), P(Xc, 16.8, Z), P(Xc + 4.7, 13.1, Z), P(Xc, 16.2, Z)], snow);
+      rect(Xc - 5, Xc + 5, 16, 22, col);                                           // drum
+      const [cx, cy] = P(Xc, 22, Z), r = 5.4 * s;
+      g.fillStyle = dome; g.beginPath(); g.ellipse(cx, cy, r, r * 1.15, 0, Math.PI, 0); g.fill();
+      g.fillStyle = snow; g.beginPath(); g.ellipse(cx - r * 0.15, cy - r * 0.9, r * 0.55, r * 0.25, 0, Math.PI, 0); g.fill();
+      rect(Xc - 0.7, Xc + 0.7, 28.2, 30.2, col);                                   // lantern
+      const [lx, ly] = P(Xc, 30.2, Z);
+      g.fillStyle = dome; g.beginPath(); g.ellipse(lx, ly, 0.9 * s, 0.9 * s, 0, Math.PI, 0); g.fill();
+      g.fillStyle = 'rgba(255,190,110,.35)';
+      rect(Xc - 0.35, Xc + 0.35, 28.6, 29.8, 'rgba(255,190,110,.3)');
+      for (const dx of [-3, 0, 3]) rect(Xc + dx - 0.4, Xc + dx + 0.4, 17.5, 20.5, 'rgba(255,180,100,.18)');
+    }
+
+    /* ---------- snowy bush / tree foliage ---------- */
+    function bush(X, Y, Z, size, rand) {
+      const s = f / Z;
+      for (let i = 0; i < 7; i++) {
+        const ox = (rand() - 0.5) * size * 1.6, oy = (rand() - 0.2) * size * 0.9;
+        const [cx, cy] = P(X + ox * 0.4, Y + oy, Z);
+        const r = (0.35 + rand() * 0.35) * size * s;
+        const sx = cx + ox * s * 0.6;
+        g.fillStyle = fog([8, 12, 16], Z);
+        g.beginPath(); g.arc(sx, cy, r, 0, Math.PI * 2); g.fill();
+        g.fillStyle = fog([66, 71, 90], Z);
+        g.beginPath(); g.ellipse(sx - r * 0.1, cy - r * 0.45, r * 0.9, r * 0.5, 0, 0, Math.PI * 2); g.fill();
+      }
+    }
+
+    function tree(X, Z, rand) {
+      const s = f / Z;
+      const b = P(X, 0, Z), top = P(X, 5.5, Z);
+      g.strokeStyle = fog([12, 12, 16], Z); g.lineCap = 'round';
+      g.lineWidth = 0.35 * s;
+      g.beginPath(); g.moveTo(b[0], b[1]); g.lineTo(top[0], top[1]); g.stroke();
+      g.lineWidth = 0.14 * s;
+      for (let i = 0; i < 5; i++) {
+        const y = 2.8 + i * 0.7, a = P(X, y, Z), dir = i % 2 ? 1 : -1;
+        g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(a[0] + dir * (1.2 + rand()) * s, a[1] - (0.8 + rand()) * s); g.stroke();
+      }
+      for (let i = 0; i < 6; i++) bush(X + (rand() - 0.5) * 2, 4.4 + rand() * 2.6, Z, 1.6 + rand(), rand);
+    }
+
+    /* ---------- iron fence with stone pillars ---------- */
+    function fence(rand) {
+      const zNear = 1.2, zFar = 150, step = 4.2;
+      for (let z = zFar - ((zFar - zNear) % step); z >= zNear; z -= step) {
+        const z2 = z + step, zm = z + step / 2;
+        // low stone wall
+        wallQuad(FENCE_X, z, z2, CURB_H, 0.65, fog([22, 24, 32], zm));
+        wallQuad(FENCE_X - 0.02, z, z2, 0.65, 0.88, fog([70, 74, 92], zm));          // snow on top
+        // bars
+        const pxStep = 0.16 * f / zm;
+        if (pxStep > 2.2) {
+          g.strokeStyle = fog([8, 8, 11], zm); g.lineWidth = Math.max(0.6, 0.035 * f / zm);
+          g.beginPath();
+          for (let bz = z + 0.5; bz < z2 - 0.1; bz += 0.16) {
+            const a = P(FENCE_X + 0.05, 0.8, bz), c = P(FENCE_X + 0.05, 1.75, bz);
+            g.moveTo(a[0], a[1]); g.lineTo(c[0], c[1]);
+          }
+          g.stroke();
+          g.lineWidth = Math.max(0.8, 0.05 * f / zm);
+          g.beginPath();
+          for (const ry of [1.0, 1.6]) { const a = P(FENCE_X + 0.05, ry, z + 0.5), c = P(FENCE_X + 0.05, ry, z2); g.moveTo(a[0], a[1]); g.lineTo(c[0], c[1]); }
+          g.stroke();
+          g.fillStyle = fog([66, 70, 88], zm);                                         // snow on rail tips
+          for (let bz = z + 0.5; bz < z2 - 0.1; bz += 0.16) {
+            const a = P(FENCE_X + 0.05, 1.78, bz), r = 0.04 * f / bz;
+            g.beginPath(); g.arc(a[0], a[1], r, 0, Math.PI * 2); g.fill();
+          }
+        } else {
+          wallQuad(FENCE_X + 0.05, z + 0.5, z2, 0.8, 1.75, fog([12, 13, 18], zm, 0.55));
+        }
+        // pillar
+        const pz = z, pw = 0.55, ph = 2.05;
+        wallQuad(FENCE_X - 0.25, pz, pz + pw, 0, ph, fog([27, 29, 38], pz));
+        poly([P(FENCE_X - 0.25, 0, pz), P(FENCE_X + 0.3, 0, pz), P(FENCE_X + 0.3, ph, pz), P(FENCE_X - 0.25, ph, pz)], fog([20, 22, 29], pz));
+        const cap = P(FENCE_X + 0.02, ph + 0.05, pz + pw / 2), cs = f / pz;
+        g.fillStyle = fog([80, 84, 102], pz);
+        g.beginPath(); g.ellipse(cap[0], cap[1], 0.45 * cs, 0.26 * cs, 0, Math.PI, 0); g.fill();
+        g.fillRect(cap[0] - 0.42 * cs, cap[1] - 0.01 * cs, 0.84 * cs, 0.08 * cs);
+      }
+    }
+
+    function lampPost(Z) {
+      const s = f / Z;
+      const col = fog([10, 9, 12], Z);
+      const base = P(LAMP_X, CURB_H, Z), top = P(LAMP_X, 3.25, Z);
+      g.fillStyle = col;
+      g.fillRect(base[0] - 0.13 * s, base[1] - 0.45 * s, 0.26 * s, 0.45 * s);           // base
+      g.fillRect(base[0] - 0.09 * s, base[1] - 0.7 * s, 0.18 * s, 0.25 * s);
+      g.fillRect(top[0] - 0.055 * s, top[1], 0.11 * s, base[1] - top[1]);               // pole
+      g.fillRect(top[0] - 0.12 * s, top[1] - 0.06 * s, 0.24 * s, 0.1 * s);              // collar
+      // lantern: tapered glass box with a little roof
+      const [cx, cy] = P(LAMP_X, 3.55, Z);
+      const bw = 0.17 * s, tw = 0.25 * s, hh = 0.28 * s;
+      g.beginPath();
+      g.moveTo(cx - bw, cy + hh); g.lineTo(cx + bw, cy + hh); g.lineTo(cx + tw, cy - hh); g.lineTo(cx - tw, cy - hh);
+      g.closePath(); g.fill();
+      g.fillStyle = `rgba(255,${Math.round(214 - Z * 0.4)},${Math.round(150 - Z * 0.5)},${0.75 + 0.25 * Math.exp(-Z / 50)})`;
+      g.beginPath();
+      g.moveTo(cx - bw + 0.04 * s, cy + hh - 0.04 * s); g.lineTo(cx + bw - 0.04 * s, cy + hh - 0.04 * s);
+      g.lineTo(cx + tw - 0.05 * s, cy - hh + 0.03 * s); g.lineTo(cx - tw + 0.05 * s, cy - hh + 0.03 * s);
+      g.closePath(); g.fill();
+      g.fillStyle = col;
+      g.fillRect(cx - 0.012 * s, cy - hh, 0.024 * s, hh * 2);
+      g.beginPath();
+      g.moveTo(cx - tw - 0.04 * s, cy - hh); g.lineTo(cx + tw + 0.04 * s, cy - hh); g.lineTo(cx, cy - hh - 0.22 * s);
+      g.closePath(); g.fill();
+      g.fillStyle = fog([118, 122, 140], Z);                                             // snow cap
+      g.beginPath(); g.ellipse(cx, cy - hh - 0.1 * s, 0.22 * s, 0.13 * s, 0, Math.PI, 0); g.fill();
+      g.beginPath(); g.arc(cx, cy - hh - 0.26 * s, 0.05 * s, 0, Math.PI * 2); g.fill();
+      g.fillStyle = fog([80, 84, 102], Z);
+      g.beginPath(); g.ellipse(base[0], base[1], 0.32 * s, 0.07 * s, 0, 0, Math.PI * 2); g.fill();
+    }
+
+    function drawStatic() {
+      const rand = seeded(2026);
+
+      // Sky
+      const sky = g.createLinearGradient(0, 0, 0, vy);
+      sky.addColorStop(0, '#020305');
+      sky.addColorStop(0.6, '#06070d');
+      sky.addColorStop(1, '#0d0e16');
+      g.fillStyle = sky; g.fillRect(0, 0, W, H);
+      // dim clouds, a faint warm edge low in the sky like the last of the city light
+      for (let i = 0; i < 16; i++) {
+        const cx = rand() * W, cy = vy * (0.25 + rand() * 0.6), r = 60 + rand() * 200;
+        const warm = cy > vy * 0.62;
+        const cl = g.createRadialGradient(cx, cy, 0, cx, cy, r);
+        cl.addColorStop(0, warm ? 'rgba(70,42,30,.08)' : 'rgba(22,26,40,.25)'); cl.addColorStop(1, 'rgba(0,0,0,0)');
+        g.save(); g.translate(cx, cy); g.scale(1, 0.3); g.translate(-cx, -cy);
+        g.fillStyle = cl; g.fillRect(cx - r, cy - r, r * 2, r * 2); g.restore();
+      }
+      g.fillStyle = '#cdd3e6';
+      for (let i = 0; i < W * vy / 9000; i++) { g.globalAlpha = 0.08 + rand() * 0.2; g.fillRect(rand() * W, rand() * vy * 0.6, 1, 1); }
+      g.globalAlpha = 1;
+
+      // Ground: wet road, curb, sidewalk
+      const road = g.createLinearGradient(0, vy, 0, H);
+      road.addColorStop(0, '#0b0c12'); road.addColorStop(1, '#050609');
+      g.fillStyle = road; g.fillRect(0, vy, W, H - vy);
+      groundQuad(CURB, WALL_X, 0.6, 400, CURB_H, '#272a36');
+      poly([P(CURB, 0, 0.6), P(CURB, CURB_H, 0.6), P(CURB, CURB_H, 400), P(CURB, 0, 400)], '#16171f');
+
+      // End of the street: a baroque church and distant blocks
+      for (let x = LEFT_X; x < WALL_X; x += 2 + rand() * 3) {
+        const w = 2 + rand() * 3, h = 6 + rand() * 9;
+        poly([P(x, 0, 175), P(x, h, 175), P(x + w, h, 175), P(x + w, 0, 175)], fog([22, 25, 36], 175));
+      }
+      church(-1.8, 150);
+
+      facades(LEFT_X, 14, 170, rand, -1);
+      facades(WALL_X, 1, 170, rand, 1);
+
+      // Snow on the ground: along the fence, along the curb, scattered patches
+      for (let z = 150; z > 0.8; z -= 0.32) {
+        const s = f / z, sq = Math.min(0.28, CAM_H / z);
+        const zc = fog([52, 55, 70], z);
+        g.fillStyle = zc;
+        for (let k = 0; k < 2; k++) {
+          const X = FENCE_X - 0.2 - rand() * 0.9, [x, y] = P(X, CURB_H, z), rx = (0.25 + rand() * 0.4) * s;
+          g.beginPath(); g.ellipse(x, y, rx, rx * sq, 0, 0, Math.PI * 2); g.fill();
+        }
+        if (rand() < 0.55) {
+          const X = CURB + 0.2 + rand() * 0.7, [x, y] = P(X, CURB_H, z), rx = (0.15 + rand() * 0.35) * s;
+          g.beginPath(); g.ellipse(x, y, rx, rx * sq, 0, 0, Math.PI * 2); g.fill();
+        }
+        for (let k = 0; k < 2; k++) {
+          const X = CURB + rand() * (FENCE_X - CURB), [x, y] = P(X, CURB_H, z), rx = (0.2 + rand() * 0.45) * s;
+          g.beginPath(); g.ellipse(x, y, rx, rx * sq, 0, 0, Math.PI * 2); g.fill();
+        }
+        if (rand() < 0.7) {                                                              // road edge slush
+          const X = CURB - 0.2 - rand() * 0.6, [x, y] = P(X, 0, z), rx = (0.15 + rand() * 0.4) * s;
+          g.beginPath(); g.ellipse(x, y, rx, rx * sq, 0, 0, Math.PI * 2); g.fill();
+        }
+        for (let k = 0; k < 3; k++) {   // snow on the road
+          const X = CURB - 0.5 - rand() * 9, [x, y] = P(X, 0, z), rx = (0.25 + rand() * 0.6) * s;
+          g.beginPath(); g.ellipse(x, y, rx, rx * sq, 0, 0, Math.PI * 2); g.fill();
+        }
+      }
+
+      // Left side: trees and hedges in front of the far buildings
+      for (let z = 140; z > 14; z -= 6 + rand() * 5) bush(LEFT_X + 2.5, 0.9, z, 1.4 + rand() * 0.6, rand);
+      tree(-9, 16, rand);
+
+      // Hedges behind the fence
+      for (let z = 150; z > 3.5; z -= 2.4 + rand() * 1.6) bush(FENCE_X + 1.3, 1.9 + rand() * 0.6, z, 0.9 + rand() * 0.4, rand);
+
+      fence(rand);
+
+      // Thick falling snow blurring the far end of the street
+      const hz = g.createRadialGradient(vx, vy, 0, vx, vy, Math.max(W, H) * 0.55);
+      hz.addColorStop(0, 'rgba(120,124,146,.22)');
+      hz.addColorStop(0.35, 'rgba(90,94,114,.08)');
+      hz.addColorStop(1, 'rgba(90,94,114,0)');
+      g.fillStyle = hz; g.fillRect(0, 0, W, H);
+
+      for (let i = LAMP_Z.length - 1; i >= 0; i--) lampPost(LAMP_Z[i]);
+
+      // Darken top and bottom so white text stays readable
+      const veil = g.createLinearGradient(0, 0, 0, H);
+      veil.addColorStop(0, 'rgba(2,3,5,.65)');
+      veil.addColorStop(0.45, 'rgba(2,3,5,.35)');
+      veil.addColorStop(0.75, 'rgba(2,3,5,.2)');
+      veil.addColorStop(1, 'rgba(2,3,5,.6)');
+      g.fillStyle = veil; g.fillRect(0, 0, W, H);
+    }
+
+    function frame(now, move) {
+      const dt = move ? Math.min(0.05, (now - last) / 1000 || 0) : 0;
+      last = now; t += dt;
+      const gust = 0.45 + 0.45 * Math.sin(t * 0.19) + 0.25 * Math.sin(t * 0.61 + 1.3);
+      const target = pointerWind === null ? gust : pointerWind + gust * 0.3;
+      wind += (target - wind) * Math.min(1, dt * 1.2);
+
+      ctx.drawImage(bg, 0, 0, W, H);
+
+      // Lamp light: halo, warm pool on the sidewalk, reflection streak on the wet stone
+      ctx.globalCompositeOperation = 'lighter';
+      for (const l of lamps) {
+        const pulse = 0.94 + 0.06 * Math.sin(t * 2.3 + l.Z);
+        const s = l.s, a = l.fade * pulse;
+
+        const hr = 2.6 * s;
+        const halo = ctx.createRadialGradient(l.lx, l.ly, 0, l.lx, l.ly, hr);
+        halo.addColorStop(0, `rgba(255,200,130,${0.55 * a})`);
+        halo.addColorStop(0.25, `rgba(255,170,90,${0.18 * a})`);
+        halo.addColorStop(1, 'rgba(255,160,80,0)');
+        ctx.fillStyle = halo; ctx.fillRect(l.lx - hr, l.ly - hr, hr * 2, hr * 2);
+
+        const sq = Math.min(0.5, CAM_H / l.Z) * 1.4;
+        ctx.save(); ctx.translate(l.bx, l.by); ctx.scale(1, sq);
+        const pr = 2.8 * s;
+        const pool = ctx.createRadialGradient(0, 0, 0, 0, 0, pr);
+        pool.addColorStop(0, `rgba(255,170,90,${0.3 * a})`); pool.addColorStop(1, 'rgba(255,160,80,0)');
+        ctx.fillStyle = pool; ctx.beginPath(); ctx.arc(0, 0, pr, 0, Math.PI * 2); ctx.fill();
+        ctx.restore();
+
+        const rl = Math.min(H - l.by + 20, 2.4 * s);
+        ctx.save(); ctx.translate(l.bx, l.by); ctx.scale(0.16, 1);
+        const refl = ctx.createRadialGradient(0, 0, 0, 0, 0, rl);
+        refl.addColorStop(0, `rgba(255,180,100,${0.3 * a})`);
+        refl.addColorStop(0.5, `rgba(255,165,85,${0.1 * a})`);
+        refl.addColorStop(1, 'rgba(255,160,80,0)');
+        ctx.fillStyle = refl; ctx.beginPath(); ctx.arc(0, 0, rl, 0, Math.PI); ctx.fill();
+        ctx.restore();
+      }
+      ctx.globalCompositeOperation = 'source-over';
+
+      for (let i = 0; i < flakes.length; i++) {
+        let fl = flakes[i];
+        if (move) {
+          fl.y += fl.sp * dt;
+          fl.x += (wind * 55 + Math.sin(t * 0.9 + fl.ph) * 14) * fl.z * dt;
+          if (fl.y > H + 8) fl = flakes[i] = newFlake(false);
+          if (fl.x > W + 100) fl.x -= W + 200; else if (fl.x < -100) fl.x += W + 200;
+        }
+        if (fl.x < -10 || fl.x > W + 10) continue;
+        let alpha = 0.1 + 0.42 * fl.z, warm = false;
+        for (const l of lamps) {
+          const r = 2.6 * l.s, dx = fl.x - l.lx, dy = fl.y - l.ly;
+          if (dx * dx + dy * dy < r * r) {
+            const k = 1 - Math.sqrt(dx * dx + dy * dy) / r;
+            alpha = Math.min(1, alpha + k * 0.7 * l.fade); warm = k > 0.15; break;
+          }
+        }
+        ctx.globalAlpha = alpha;
+        if (fl.r < 1.2) { ctx.fillStyle = warm ? '#ffe6c4' : '#dfe4f2'; ctx.fillRect(fl.x, fl.y, fl.r * 1.5, fl.r * 1.5); }
+        else { const d = fl.r * 2.6; ctx.drawImage(warm ? WARM : COOL, fl.x - d / 2, fl.y - d / 2, d, d); }
+      }
+      ctx.globalAlpha = 1;
+    }
+
+    function loop(now) { if (!running) return; frame(now, true); requestAnimationFrame(loop); }
+    function start() {
+      if (running || reduceMotion || !onScreen || document.hidden) return;
+      running = true; last = performance.now(); requestAnimationFrame(loop);
+    }
+    function stop() { running = false; }
+
+    el.addEventListener('pointermove', e => {
+      const r = el.getBoundingClientRect();
+      pointerWind = ((e.clientX - r.left) / r.width - 0.5) * 2;
+    });
+    el.addEventListener('pointerleave', () => { pointerWind = null; });
+    new IntersectionObserver(([entry]) => { onScreen = entry.isIntersecting; onScreen ? start() : stop(); }).observe(el);
+    document.addEventListener('visibilitychange', () => document.hidden ? stop() : start());
+    new ResizeObserver(() => { layout(); if (!running) frame(performance.now(), false); }).observe(el);
+
+    layout();
+    frame(performance.now(), false);
+    start();
+  }
+
+  document.querySelectorAll('.snow-street').forEach(SnowStreet);
+})();
+</script>
+<!-- ===== end snowy street script ===== -->
 </body>
 </html>
