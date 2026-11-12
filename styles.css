@@ -382,3 +382,13 @@ html,body{background:#080809!important;background-image:none!important}
 .role-design-board-v2 .rank-list img{width:23px;height:23px;flex:0 0 23px}
 @media(max-width:480px){.role-design-board-v2 .rank-column:nth-child(2){padding-top:0}}
 @media(prefers-reduced-motion:reduce){.role-design-board-v2 .role-toggle{transition:none}}
+
+/* Exact role symbols cropped from the five reference screenshots */
+.role-design-board-v2 .role-sprite{
+ display:inline-block;flex:0 0 24px;width:24px;height:24px;
+ background-image:url("assets/role-design/exact-role-icons.webp");
+ background-repeat:no-repeat;background-size:24px 648px;
+ border-radius:3px;
+}
+.role-design-board-v2 .rank-list li{gap:11px;min-height:39px}
+.role-design-board-v2 .rank-list li:hover{background:rgba(255,255,255,.045)}
