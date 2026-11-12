@@ -319,3 +319,23 @@ fieldset{border:0;padding:0;margin:0}.choice-grid{display:grid;grid-template-col
 /* Preserve the existing responsive hero layout while the canvas renders behind it. */
 .hero.snow-street { height: auto; min-height: 100svh; background: transparent; }
 @media (max-width: 650px) { .hero.snow-street { min-height: auto; } }
+
+/* Zhenya refresh: minimal black portfolio, Space-inspired centered loading screen */
+html,body{background:#080809!important;background-image:none!important}
+.site-snow,.snow-street,.snow-street canvas{display:none!important}
+.ambient,.cursor-glow{display:none!important}
+.loader{background:radial-gradient(ellipse at 50% 52%,#15111d 0%,#09080d 52%,#060608 100%)!important}
+.loader-orb{display:none!important}
+.loader-inner{box-sizing:border-box;width:min(490px,calc(100% - 34px));min-height:295px;padding:48px 32px 40px;border:1px solid rgba(211,197,242,.22);border-radius:32px;background:radial-gradient(ellipse at center,rgba(104,77,148,.3),transparent 85%),#211a30;box-shadow:0 20px 90px rgba(0,0,0,.38);display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center}
+.loader-kicker{display:inline-flex;align-items:center;gap:9px;padding:9px 14px;border-radius:30px;background:rgba(235,218,255,.07);border:1px solid rgba(235,218,255,.14);color:#b4a7cb;font-size:11px;font-weight:750;letter-spacing:.11em}
+.loader-dot{width:8px;height:8px;border-radius:50%;background:#c9a4fc;box-shadow:0 0 12px #b99aff}
+.loader-brand{font-size:clamp(48px,7vw,70px);line-height:1;font-weight:850;letter-spacing:-.075em;color:#f5f2ff;margin:40px 0 13px}
+.loader-brand span{color:#c6a2f8}
+.loader-subtitle{font-size:11px;font-weight:750;letter-spacing:.17em;color:#a99dba}
+.loader-line{width:140px;height:3px;margin:28px auto 0;background:rgba(236,228,255,.2);border-radius:99px}
+.loader-line i{background:linear-gradient(90deg,#ae89de,#f7f3ff)!important;box-shadow:0 0 20px rgba(218,196,255,.5)!important;border-radius:99px}
+.loader-meta{width:100%;justify-content:center;gap:15px;margin-top:14px;font-size:9px;letter-spacing:.1em;color:#ada2bf!important}
+.loader-meta b{color:#cab7e6!important}
+.big-project,.bot-showcase-inner,.role-card,.capability-card,.server-layout-card,.role-group-card,.icon-panel,.icon-tile,.form-shell,.discord-profile,.retired-row{background:#101012!important;border-color:rgba(255,255,255,.11)!important;box-shadow:none!important}
+.big-project:hover,.role-card:hover,.capability-card:hover{background:#161619!important;border-color:rgba(255,255,255,.24)!important}
+@media(max-width:580px){.loader-inner{min-height:260px;padding:34px 20px}.loader-brand{margin-top:32px}.loader-subtitle{font-size:9px;letter-spacing:.1em}}
