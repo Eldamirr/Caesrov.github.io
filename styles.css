@@ -392,3 +392,20 @@ html,body{background:#080809!important;background-image:none!important}
 }
 .role-design-board-v2 .rank-list li{gap:11px;min-height:39px}
 .role-design-board-v2 .rank-list li:hover{background:rgba(255,255,255,.045)}
+
+/* Fixed roles: complete screenshot icons with correct coordinates */
+.role-design-board-v2 .role-sprite{
+ display:block!important;flex:0 0 32px!important;width:32px!important;height:32px!important;
+ background-image:url("assets/role-design/role-icons-fixed.webp?v=2")!important;
+ background-repeat:no-repeat!important;
+ background-size:32px 864px!important;
+ background-position-x:0!important;
+ border-radius:6px!important;
+}
+.role-design-board-v2 .rank-list li{
+ display:flex;align-items:center;min-height:46px;padding:6px 8px;gap:12px;
+ border-radius:9px;font-size:13px;line-height:1.45;color:#eee;
+}
+.role-design-board-v2 .rank-list li span:last-child{min-width:0}
+.role-design-board-v2 .role-group-card{padding:18px 16px!important;border-radius:20px!important}
+.role-design-board-v2 .role-group-head{color:#e1e1e5!important;font-size:13px!important}
