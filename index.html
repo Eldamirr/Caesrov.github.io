@@ -8,7 +8,7 @@
   <title>Zhenya — Operations &amp; Community Systems</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://api.lanyard.rest">
-  <link rel="stylesheet" href="styles.css?v=zhenya-20261112">
+  <link rel="stylesheet" href="styles.css?v=zhenya-20261112-fix2">
   <style>
     .featured-stack{display:grid;gap:16px;align-self:stretch}
     .featured-bot{position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:flex-start;min-height:330px;padding:30px;border:1px solid rgba(216,199,255,.24);border-radius:30px;background:radial-gradient(circle at 92% 0%,rgba(164,132,218,.19),transparent 45%),linear-gradient(145deg,rgba(38,32,52,.96),rgba(16,13,23,.98));box-shadow:0 25px 70px rgba(0,0,0,.22);transition:transform .25s,border-color .25s}
@@ -86,7 +86,18 @@
     .marquee-track{gap:22px;color:#ddd;font-size:14px}
     .marquee-track span{white-space:nowrap}.marquee-track i{color:#757575}
     @media(max-width:650px){.marquee-wrap{width:calc(100% - 32px);padding:23px 0}.marquee-label{margin-bottom:17px}.marquee-track{font-size:13px;gap:18px}}
-  </style>
+  
+    /* Critical appearance and six-card fallback, independent of external CSS cache */
+    .loader{background:#050505!important}
+    .loader .loader-inner{background:#101011!important;border-color:rgba(255,255,255,.18)!important;box-shadow:0 24px 90px rgba(0,0,0,.58)!important}
+    .loader .loader-kicker{background:#19191b!important;border-color:#353538!important;color:#c9c9cd!important}
+    .loader .loader-dot{background:#fff!important;box-shadow:0 0 8px rgba(255,255,255,.4)!important}
+    .loader .loader-brand span{color:#eee!important}
+    .loader .loader-subtitle,.loader .loader-meta,.loader .loader-meta b{color:#a7a7ac!important}
+    .loader .loader-line i{background:linear-gradient(90deg,#808080,#fff)!important}
+    #currentGrid > .extra-current{display:none!important}
+    #currentGrid.expanded > .extra-current{display:flex!important}
+</style>
 </head>
 <body>
   <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
@@ -497,7 +508,7 @@
     <span>Community · Operations · Systems</span>
   </footer>
 
-  <script src="script.js"></script>
+  <script src="script.js?v=zhenya-20261112-fix2" defer></script></script>
 
 </body>
 </html>
