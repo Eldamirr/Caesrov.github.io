@@ -104,7 +104,7 @@ viewAllBtn.addEventListener('click',function(){
   const open = viewAllBtn.getAttribute('aria-expanded') === 'true';
   viewAllBtn.setAttribute('aria-expanded',String(!open));
   currentGrid.classList.toggle('expanded',!open);
-  viewAllBtn.childNodes[0].nodeValue = open ? 'View all 7 ' : 'Show less ';
+  viewAllBtn.childNodes[0].nodeValue = open ? 'Show 1 more server ' : 'Show fewer servers ';
 
   if(!open){
     requestAnimationFrame(function(){
@@ -234,3 +234,35 @@ document.querySelectorAll('a[href^="#"]').forEach(function(a){
     }
   });
 });
+
+/* Interactive touches: cursor spotlight, scroll indicator and active section links */
+const portfolioCards = document.querySelectorAll('#currentGrid .role-card');
+if (matchMedia('(hover:hover) and (pointer:fine)').matches) {
+  portfolioCards.forEach(card => {
+    card.addEventListener('pointermove', event => {
+      const bounds = card.getBoundingClientRect();
+      card.style.setProperty('--spot-x', (event.clientX - bounds.left) + 'px');
+      card.style.setProperty('--spot-y', (event.clientY - bounds.top) + 'px');
+    }, {passive:true});
+  });
+}
+const scrollProgress = document.getElementById('scrollProgress');
+function updateScrollProgress(){
+  if(!scrollProgress) return;
+  const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+  scrollProgress.style.width = (maxScroll > 0 ? Math.min(100,window.scrollY/maxScroll*100) : 0) + '%';
+}
+window.addEventListener('scroll',updateScrollProgress,{passive:true});
+window.addEventListener('resize',updateScrollProgress,{passive:true});
+updateScrollProgress();
+const sectionLinks = [...document.querySelectorAll('.topbar nav a[href^="#"]')];
+const sections = sectionLinks.map(link=>document.querySelector(link.getAttribute('href'))).filter(Boolean);
+if(sections.length && 'IntersectionObserver' in window){
+  const navObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if(!entry.isIntersecting) return;
+      sectionLinks.forEach(link=>link.classList.toggle('is-active',link.getAttribute('href')==='#'+entry.target.id));
+    });
+  },{rootMargin:'-25% 0px -60% 0px'});
+  sections.forEach(section=>navObserver.observe(section));
+}
