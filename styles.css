@@ -409,3 +409,17 @@ html,body{background:#080809!important;background-image:none!important}
 .role-design-board-v2 .rank-list li span:last-child{min-width:0}
 .role-design-board-v2 .role-group-card{padding:18px 16px!important;border-radius:20px!important}
 .role-design-board-v2 .role-group-head{color:#e1e1e5!important;font-size:13px!important}
+
+/* Role gallery: artwork rebuilt directly from 24 individually supplied original files */
+.role-design-board-v2 .role-sprite{
+ display:block!important;flex:0 0 36px!important;width:36px!important;height:36px!important;
+ background-image:url("assets/role-design/original-24-icons.webp?v=20261113")!important;
+ background-repeat:no-repeat!important;
+ background-size:36px 864px!important;
+ background-position-x:0!important;
+ background-color:transparent!important;
+ border-radius:0!important;
+}
+.role-design-board-v2 .rank-list li{min-height:48px;gap:12px;padding:5px 7px}
+.role-design-board-v2 .rank-list li:hover{background:rgba(255,255,255,.035)}
+.role-design-board-v2 .role-group-card{background:#101012!important;border-color:rgba(255,255,255,.13)!important}
